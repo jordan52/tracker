@@ -23,6 +23,3 @@
 .sliderbarlabel {
     min-width: calc(var(--base)*3);
 }
-.sliderbarinput {
-    max-width: calc(var(--base)*10);
-}

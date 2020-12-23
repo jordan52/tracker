@@ -4,7 +4,7 @@ const Slider = (props) => {
   return (
     <div class='sliderbar'>
       <div>
-        <label className='sliderbarlabel' htmlFor={props.id}>{props.label}</label>
+        <label className='sliderbarlabel' htmlFor={props.id}>{props.label} {props.value}</label>
         <input
           className='sliderbarinput'
           id={props.id}
