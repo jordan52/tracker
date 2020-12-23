@@ -1,0 +1,28 @@
+
+.sliderbar {
+    overflow: hidden;
+}
+
+.sliderbar > * {
+    display: flex;
+    flex-wrap: wrap;
+    margin: calc(var(--s0) / 2 * -1);
+}
+
+.sliderbar > * > * {
+    margin: calc(var(--s0) / 2);
+    flex-grow: 1;
+}
+
+.sliderbar > * > :last-child {
+    flex-basis: 0;
+    flex-grow: 999;
+    min-width: calc(80% - var(--s0));
+}
+
+.sliderbarlabel {
+    min-width: calc(var(--base)*3);
+}
+.sliderbarinput {
+    max-width: calc(var(--base)*10);
+}
