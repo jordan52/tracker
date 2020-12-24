@@ -9,12 +9,6 @@ const Grid = (props) => {
       <div>
         <Track {...props}/>
       </div>
-      <div>
-        <Track {...props}/>
-      </div>
-      <div>
-        <Track {...props}/>
-      </div>
     </div>
   )
 }
