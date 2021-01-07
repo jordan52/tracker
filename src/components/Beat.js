@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-
+import Knob from './Knob';
 const Beat = (props) => {
   const [freq, setFreq] = useState(0);
 
-  const handleFreqChange = (e) => {
+  const handleTextFreqChange = (e) => {
     setFreq(e.target.value);
+    //setFreq(e);
+    console.log('freq is ' + e)
   }
+  const handleFreqChange = (e) => {
+    setFreq(e);
+    console.log('freq is ' + e)
+  }
+
 
   if(props.osc) {
     if (props.tick == props.i && freq > 0) {
@@ -13,15 +20,14 @@ const Beat = (props) => {
       props.osc.oscillatorNode.frequency.setValueAtTime(freq, props.context.currentTime)
       props.osc.oscillatorGainNode.gain.setValueAtTime(0.9, props.context.currentTime);
     } else {
-      props.osc.oscillatorGainNode.gain.setValueAtTime(0.01, props.context.currentTime+100);
+      props.osc.oscillatorGainNode.gain.setValueAtTime(0.0, props.context.currentTime);
     }
-  } else {
-    console.log('NO OSC PROP')
   }
 
   return (
     <div className={`beat ${props.tick == props.i ? "red":""}`}>
-      <input className='beatinput' value={freq} onChange={handleFreqChange} />
+      <input className='beatinput' value={freq} onChange={handleTextFreqChange} />
+
     </div>
   )
 }

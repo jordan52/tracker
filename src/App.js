@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useState, useEffect, useRef } from 'react';
 import Audio from './Audio';
+import Dial from './components/Dial';
 import Grid from './components/Grid';
 import Slider from './components/Slider';
 
@@ -48,10 +49,12 @@ function App() {
 
   const playpause = () => {
     if(!isPlaying){
+      Audio.masterGainNode.gain.setValueAtTime(level/100, Audio.context.currentTime)
       play();
       toggleIsPlaying();
     } else {
       clearInterval(timer.current);
+      Audio.masterGainNode.gain.setValueAtTime(0, Audio.context.currentTime)
       toggleIsPlaying();
     }
   }
@@ -91,10 +94,20 @@ function App() {
   useEffect(initializeMasterGain, [])
 
 
-
+  const knobtest = (v) => {
+    console.log(`knobtest ${v}`)
+  }
   return (
-    <div className='with-sidebar'>
+    <div>
+      <Dial size={100} currentDeg={0} startAngle={5}/>
+    </div>
+  )
+  /*
+  return (
+    <div className='with-sidebar' onChange={knobtest}>
+
       <div>
+
         <div className='controlbox'>
           <Slider
             onChange={volume}
@@ -121,6 +134,6 @@ function App() {
         <Grid beats={16} tick={tick} osc={oscillatorNodes[0]} context={Audio.context} />
       </div>
     </div>
-  );
+  );*/
 }
 export default App;
