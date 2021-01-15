@@ -33,14 +33,14 @@ const BeatDial = (props) => {
 
 
 
-  if (props.tick == props.i && xVal) {
+  if (props.tick == props.i && yVal) {
     console.log(`${2000*(xVal/100)} and ${yVal}`)
     //props.osc.oscillatorNode.frequency.setValueAtTime(2000*(xVal/100), props.context.currentTime)
-    if(xVal > 0) {
-      props.oscillator.frequency.setValueAtTime(2000 * (xVal / 100), props.context.currentTime);
+    if(yVal > 0) {
+      props.oscillator.frequency.setValueAtTime(2000 * (yVal / 100), props.context.currentTime);
     }
     if(props.gain ) {
-      props.gain.gain.setTargetAtTime(yVal / 100, props.context.currentTime, 0.01);
+      props.gain.gain.setTargetAtTime(xVal / 100, props.context.currentTime, 0.01);
     }
     //props.osc.oscillatorGainNode.gain.setTargetAtTime(0.9, props.context.currentTime, 0.01);
     //props.osc.oscillatorGainNode.gain.setTargetAtTime(0, props.context.currentTime, 1000);
