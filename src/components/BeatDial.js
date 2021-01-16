@@ -9,6 +9,10 @@ const BeatDial = (props) => {
   const [xVal, setXVal] = useState(0);
   const [yVal, setYVal] = useState(0);
   const [style, setStyle] = useState(`radial-gradient(farthest-corner at ${xVal}px ${height-yVal}px,#f35 0%, #43e 100%)`)
+  const updateVals = (e) => {
+    e.preventDefault();
+    props.updateBeat(props.i, xVal/100, 1000 * (yVal / 100));
+  }
   const startDrag = (e) => {
     e.preventDefault();
     const boundingRect = e.target.getBoundingClientRect();
@@ -32,23 +36,8 @@ const BeatDial = (props) => {
       document.removeEventListener("mousemove", moveHandler);
     });
   }
-
-
-
-  if (props.tick == props.i && yVal) {
-    console.log(`${2000*(xVal/100)} and ${yVal}`)
-    if(yVal > 0) {
-      props.oscillator.frequency.setValueAtTime(100 * (yVal / 100), props.context.currentTime);
-    }
-    if(props.gain ) {
-      props.gain.gain.setTargetAtTime(xVal / 100, props.context.currentTime, 0.01);
-    }
-  }
-
-
   return (
-    <div className={`beat ${props.tick == props.i ? "red":""}`} onMouseDown={startDrag} style={{backgroundImage: style, width:width+"px", height:height+"px"}}>
-      <div>{xVal}, {yVal}</div>
+    <div className={`beat ${props.tick == props.i ? "red":""}`} onMouseDown={startDrag} onMouseUp={updateVals} style={{backgroundImage: style, width:width+"px", height:height+"px"}}>
     </div>
   )
 }

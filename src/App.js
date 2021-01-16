@@ -21,15 +21,21 @@ const useToggle = (initialState) => {
 function App() {
 
   let timer = useRef(null);
+  const [beats, setBeats] = useState(8);
   const [level, setLevel] = useState(5);
   const [tick, setTick] = useState(0);
   const [isPlaying, toggleIsPlaying] = useToggle(false);
+  const [bpm, setBpm] = useState(60);
+  const [oscillator, setOscillator] = useState();
+  const [gainNode, setGainNode] = useState();
+  const [beatLevels, setBeatLevels] = useState([0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]);
+  const [beatFreqs, setBeatFreqs] = useState([150,440,100,650,150,440,100,160]);
+
   const volume = (event) => {
     Audio.masterGainNode.gain.setValueAtTime(parseInt(event.target.value)/100, Audio.context.currentTime)
     setLevel(event.target.value);
     console.log(`master gain node value: ${Audio.masterGainNode.gain.value}`);
   };
-  const [bpm, setBpm] = useState(60);
   const tempo = (event) => {
     setBpm(event.target.value);
     if(isPlaying) {
@@ -37,18 +43,22 @@ function App() {
       play();
     }
   };
+  const updateBeat = (tick, volume, frequency) => {
+    console.log(`updatingbeat ${tick}, ${volume}, ${frequency} `)
+    let newLevels = [...beatLevels];
+    newLevels[tick] = volume;
+    setBeatLevels(newLevels);
 
+    let newFreqs = [...beatFreqs];
+    newFreqs[tick] = frequency;
+    setBeatFreqs(newFreqs);
+  };
   const play = () => {
     timer.current = setInterval(()=>{
-      setTick(tick=>{if(tick>14)return 0; return tick+1})
+      setTick(tick=>{if(tick>beats-2)return 0; return tick+1})
     },(60 * 1000) / bpm / 2);
     return () => clearInterval(timer.current);
   }
-  /*
-  useEffect(()=>{
-    play();
-  },[]);
-*/
   const playpause = () => {
     if(!isPlaying){
       Audio.context.resume();
@@ -61,44 +71,32 @@ function App() {
       toggleIsPlaying();
     }
   }
-  // https://levelup.gitconnected.com/the-web-is-alive-with-the-sound-of-react-bb0713aa1010
-  const [oscillatorNodes, setOscillatorNodes] = useState([])
-  const [oscillator, setOscillator] = useState();
-  const [gainNode, setGainNode] = useState();
   const initializeMasterGain = () => {
-    // Connect the masterGainNode to the audio context to allow it to output sound.
     Audio.masterGainNode.connect(Audio.context.destination)
-
-    // Set masterGain Value
     Audio.masterGainNode.gain.setValueAtTime(level/100, Audio.context.currentTime)
 
-    // create one single osc
-    // Create a GainNode for the oscillator, set it to 0 volume and connect it to masterGainNode
     const oscillatorGainNode = Audio.context.createGain()
     oscillatorGainNode.gain.setValueAtTime(0, Audio.context.currentTime)
     oscillatorGainNode.connect(Audio.masterGainNode)
 
-    // Create OscillatorNode, connect it to its GainNode, and make it start playing.
     const oscillatorNode = Audio.context.createOscillator()
     oscillatorNode.connect(oscillatorGainNode)
     oscillatorNode.type = 'square';
     oscillatorNode.start()
+
     setOscillator(oscillatorNode);
     setGainNode(oscillatorGainNode);
-    // Store the nodes along with their values in state.
-    // Note: When an oscillator is created, frequency is set to 440,
-    // and type is set to 'sine' by default.
-    /*const oscillatorNodeValues = {
-      oscillatorNode: oscillatorNode,
-      oscillatorGainNode: oscillatorGainNode,
-      frequency: oscillatorNode.frequency.value,
-      type: oscillatorNode.type,
-      gain: 0
-    }*/
-
-      //setOscillatorNodes([...oscillatorNodes, oscillatorNodeValues])
   }
+
   useEffect(initializeMasterGain, [])
+
+  // play tones
+  useEffect(() => {
+    if(oscillator && gainNode) {
+      oscillator.frequency.setValueAtTime(beatFreqs[tick], Audio.context.currentTime);
+      gainNode.gain.setTargetAtTime(beatLevels[tick], Audio.context.currentTime, 0.01);
+    }
+  },[tick])
 
   return (
     <div className='with-sidebar'>
@@ -126,7 +124,7 @@ function App() {
           ></Slider>
           <button onClick={()=>playpause()}>{isPlaying ? 'pause' : ' play  '}</button>
         </div>
-        <Grid beats={16} tick={tick} gain={gainNode} oscillator={oscillator} context={Audio.context} />
+        <Grid beats={beats} tick={tick} updateBeat={updateBeat} />
       </div>
     </div>
   );
