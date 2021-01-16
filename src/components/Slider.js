@@ -2,7 +2,7 @@ import React, { useState }  from 'react';
 import './Slider.css';
 const Slider = (props) => {
   return (
-    <div class='sliderbar'>
+    <div className='sliderbar'>
       <div>
         <label className='sliderbarlabel' htmlFor={props.id}>{props.label} {props.value}</label>
         <input
