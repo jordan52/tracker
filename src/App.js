@@ -21,9 +21,9 @@ const useToggle = (initialState) => {
 function App() {
 
   let timer = useRef(null);
-  const [level, setLevel] = useState(50);
+  const [level, setLevel] = useState(5);
   const [tick, setTick] = useState(0);
-  const [isPlaying, toggleIsPlaying] = useToggle(true);
+  const [isPlaying, toggleIsPlaying] = useToggle(false);
   const volume = (event) => {
     Audio.masterGainNode.gain.setValueAtTime(parseInt(event.target.value)/100, Audio.context.currentTime)
     setLevel(event.target.value);
@@ -44,12 +44,14 @@ function App() {
     },(60 * 1000) / bpm / 2);
     return () => clearInterval(timer.current);
   }
+  /*
   useEffect(()=>{
     play();
   },[]);
-
+*/
   const playpause = () => {
     if(!isPlaying){
+      Audio.context.resume();
       Audio.masterGainNode.gain.setValueAtTime(level/100, Audio.context.currentTime)
       play();
       toggleIsPlaying();
@@ -73,7 +75,7 @@ function App() {
     // create one single osc
     // Create a GainNode for the oscillator, set it to 0 volume and connect it to masterGainNode
     const oscillatorGainNode = Audio.context.createGain()
-    oscillatorGainNode.gain.setValueAtTime(1, Audio.context.currentTime)
+    oscillatorGainNode.gain.setValueAtTime(0, Audio.context.currentTime)
     oscillatorGainNode.connect(Audio.masterGainNode)
 
     // Create OscillatorNode, connect it to its GainNode, and make it start playing.
