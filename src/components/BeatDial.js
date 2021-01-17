@@ -6,8 +6,8 @@ Math.clip = function(number, min, max) {
 const BeatDial = (props) => {
   const width = 100;
   const height = 100;
-  const [xVal, setXVal] = useState(0);
-  const [yVal, setYVal] = useState(0);
+  const [xVal, setXVal] = useState(Math.round(props.freq/100));
+  const [yVal, setYVal] = useState(Math.round(props.level*100));
   const [style, setStyle] = useState(`radial-gradient(farthest-corner at ${xVal}px ${height-yVal}px,#f35 0%, #43e 100%)`)
   const updateVals = (e) => {
     e.preventDefault();
@@ -38,6 +38,7 @@ const BeatDial = (props) => {
   }
   return (
     <div className={`beat ${props.tick == props.i ? "red":""}`} onMouseDown={startDrag} onMouseUp={updateVals} style={{backgroundImage: style, width:width+"px", height:height+"px"}}>
+        <div>{xVal},{yVal}</div>
     </div>
   )
 }

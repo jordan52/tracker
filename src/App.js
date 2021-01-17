@@ -22,14 +22,16 @@ function App() {
 
   let timer = useRef(null);
   const [beats, setBeats] = useState(8);
-  const [level, setLevel] = useState(5);
+  const [level, setLevel] = useState(10);
+  const [pan, setPan] = useState(0.5);
   const [tick, setTick] = useState(0);
   const [isPlaying, toggleIsPlaying] = useToggle(false);
-  const [bpm, setBpm] = useState(60);
+  const [bpm, setBpm] = useState(160);
   const [oscillator, setOscillator] = useState();
   const [gainNode, setGainNode] = useState();
-  const [beatLevels, setBeatLevels] = useState([0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]);
-  const [beatFreqs, setBeatFreqs] = useState([150,440,100,650,150,440,100,160]);
+  const [panNode, setPanNode] = useState();
+  const [beatLevels, setBeatLevels] = useState([0.33, 0.2, 0.29, 0.19, 0.31, 0.36, 0.38, 0.49]);
+  const [beatFreqs, setBeatFreqs] = useState([220, 250, 360, 330, 440, 410, 370, 370]);
 
   const volume = (event) => {
     Audio.masterGainNode.gain.setValueAtTime(parseInt(event.target.value)/100, Audio.context.currentTime)
@@ -43,6 +45,10 @@ function App() {
       play();
     }
   };
+  const changePan = (event) => {
+    panNode.pan.value = event.target.value;
+    setPan(event.target.value );
+  }
   const updateBeat = (tick, volume, frequency) => {
     console.log(`updatingbeat ${tick}, ${volume}, ${frequency} `)
     let newLevels = [...beatLevels];
@@ -53,6 +59,7 @@ function App() {
     newFreqs[tick] = frequency;
     setBeatFreqs(newFreqs);
   };
+
   const play = () => {
     timer.current = setInterval(()=>{
       setTick(tick=>{if(tick>beats-2)return 0; return tick+1})
@@ -75,17 +82,25 @@ function App() {
     Audio.masterGainNode.connect(Audio.context.destination)
     Audio.masterGainNode.gain.setValueAtTime(level/100, Audio.context.currentTime)
 
+
+    const panNode = Audio.context.createStereoPanner();
+    panNode.pan.value = pan;
+    panNode.connect(Audio.masterGainNode);
+
     const oscillatorGainNode = Audio.context.createGain()
     oscillatorGainNode.gain.setValueAtTime(0, Audio.context.currentTime)
-    oscillatorGainNode.connect(Audio.masterGainNode)
+    oscillatorGainNode.connect(panNode)
 
     const oscillatorNode = Audio.context.createOscillator()
-    oscillatorNode.connect(oscillatorGainNode)
+    oscillatorNode.connect(panNode)
     oscillatorNode.type = 'square';
     oscillatorNode.start()
 
+
+
     setOscillator(oscillatorNode);
     setGainNode(oscillatorGainNode);
+    setPanNode(panNode);
   }
 
   useEffect(initializeMasterGain, [])
@@ -122,9 +137,10 @@ function App() {
             max={200}
             step="1"
           ></Slider>
+
           <button onClick={()=>playpause()}>{isPlaying ? 'pause' : ' play  '}</button>
         </div>
-        <Grid beats={beats} tick={tick} updateBeat={updateBeat} />
+        <Grid beats={beats} tick={tick} beatLevels={beatLevels} beatFreqs={beatFreqs} updateBeat={updateBeat} pan={pan} changePan={changePan}/>
       </div>
     </div>
   );
