@@ -4,13 +4,13 @@ import Slider from "./Slider";
 const Track = (props) => {
   var items = [];
   for (var i = 0; i < props.beats; i++) {
-    items.push(<BeatDial i={i} level={props.beatLevels[i]} freq={props.beatFreqs[i]}{...props}/>);
+    items.push(<BeatDial i={i} level={props.beatLevels[props.track][i]} freq={props.beatFreqs[props.track][i]}{...props}/>);
   }
   return (
     <div className="track">
       <Slider
-        onChange={props.changePan}
-        value={props.pan}
+        onChange={(e)=>props.changePan(e, props.track)}
+        value={props.pan[props.track]}
         id="panit"
         name="panit"
         label="pan"

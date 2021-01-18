@@ -11,7 +11,7 @@ const BeatDial = (props) => {
   const [style, setStyle] = useState(`radial-gradient(farthest-corner at ${xVal}px ${height-yVal}px,#f35 0%, #43e 100%)`)
   const updateVals = (e) => {
     e.preventDefault();
-    props.updateBeat(props.i, xVal/100, 1000 * (yVal / 100));
+    props.updateBeat(props.i, props.track, xVal/100, 1000 * (yVal / 100));
   }
   const startDrag = (e) => {
     e.preventDefault();
