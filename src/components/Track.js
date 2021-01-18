@@ -29,15 +29,19 @@ const Track = (props) => {
           max={1}
           step="0.1"
         ></Slider>
-        <select
-          onChange={(e) => props.changeTrackType(e, props.track)}
-        >
-          <option selected={props.trackTypes[props.track] === 'sine'}>sine</option>
-          <option selected={props.trackTypes[props.track] === 'square'}>square</option>
-          <option selected={props.trackTypes[props.track] === 'sawtooth'}>sawtooth</option>
-          <option selected={props.trackTypes[props.track] === 'triangle'}>triangle</option>
-        </select>
-        <button className="leftMargin" onClick={(e)=>props.removeTrack(e, props.track)}>- track</button>
+        <div className="cluster">
+          <div>
+            <select
+              onChange={(e) => props.changeTrackType(e, props.track)}
+            >
+              <option selected={props.trackTypes[props.track] === 'sine'}>sine</option>
+              <option selected={props.trackTypes[props.track] === 'square'}>square</option>
+              <option selected={props.trackTypes[props.track] === 'sawtooth'}>sawtooth</option>
+              <option selected={props.trackTypes[props.track] === 'triangle'}>triangle</option>
+            </select>
+            <button onClick={(e)=>props.removeTrack(e, props.track)}>X</button>
+          </div>
+        </div>
       </div>
       {items}
     </div>

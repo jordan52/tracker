@@ -238,8 +238,11 @@ function App() {
             max={200}
             step="1"
           ></Slider>
-
-          <button onClick={()=>playpause()}>{isPlaying ? 'pause' : ' play  '}</button><button className="leftMargin" onClick={addTrack}>+ track</button>
+          <div className="cluster">
+            <div>
+            <button onClick={()=>playpause()}>{isPlaying ? 'pause' : ' play  '}</button><button onClick={addTrack}>+ track</button>
+            </div>
+          </div>
         </div>
         <Grid tracks={tracks} beats={beats} tick={tick} beatLevels={beatLevels} beatFreqs={beatFreqs} updateBeat={updateBeat} pan={pan} changePan={changePan} trackLevels={trackLevels} changeTrackLevel={changeTrackLevel} trackTypes={trackTypes} changeTrackType={changeTrackType} removeTrack={removeTrack}/>
 
