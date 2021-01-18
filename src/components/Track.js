@@ -37,6 +37,7 @@ const Track = (props) => {
           <option selected={props.trackTypes[props.track] === 'sawtooth'}>sawtooth</option>
           <option selected={props.trackTypes[props.track] === 'triangle'}>triangle</option>
         </select>
+        <button className="leftMargin" onClick={(e)=>props.removeTrack(e, props.track)}>- track</button>
       </div>
       {items}
     </div>

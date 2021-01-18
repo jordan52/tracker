@@ -66,3 +66,6 @@
     border-color: red;
     background-color: pink;
 }
+.leftMargin {
+    margin-left: var(--s1);
+}
