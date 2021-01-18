@@ -24,6 +24,8 @@ function App() {
   const [beats, setBeats] = useState(8);
   const [level, setLevel] = useState(10);
   const [pan, setPan] = useState([-1,1]);
+  const [trackLevels, setTrackLevels] = useState([100,0]);
+  const [trackTypes, setTrackTypes] = useState(['sawtooth','sine']);
   const [tick, setTick] = useState(0);
   const [isPlaying, toggleIsPlaying] = useToggle(false);
   const [bpm, setBpm] = useState(160);
@@ -47,11 +49,24 @@ function App() {
     }
   };
   const changePan = (event, track) => {
-    console.log(`changing pan for track ${track}`)
-    panNode.pan.value = event.target.value;
+    oscillators[track].panNode.pan.value = event.target.value;
     const p = [...pan];
     p[track] = event.target.value;
     setPan(p );
+  }
+  const changeTrackLevel = (event, track) => {
+    console.log(`Changing Track level ${track} ${event.target.value}`)
+    oscillators[track].oscillatorTrackGainNode.gain.setValueAtTime(parseInt(event.target.value)/100, Audio.context.currentTime)
+    const p = [...trackLevels];
+    p[track] = parseInt(event.target.value);
+    setTrackLevels(p);
+  }
+  const changeTrackType = (event, track) => {
+    console.log(`changing track type ${event.target.value} ${track}`);
+    oscillators[track].oscillatorNode.type = event.target.value;
+    const t = [...trackTypes];
+    t[track] = event.target.value;
+    setTrackTypes(t);
   }
   const updateBeat = (tick, track, volume, frequency) => {
     console.log(`updatingbeat ${tick}, ${volume}, ${frequency} `)
@@ -87,20 +102,23 @@ function App() {
     Audio.masterGainNode.gain.setValueAtTime(level/100, Audio.context.currentTime)
     var o = []
     for(let i = 0; i < tracks;i++){
-      const panNode = Audio.context.createStereoPanner();
-      panNode.pan.value = pan[i];
-      panNode.connect(Audio.masterGainNode);
+
+      const oscillatorTrackGainNode = Audio.context.createGain()
+      oscillatorTrackGainNode.gain.setValueAtTime(trackLevels[i]/100, Audio.context.currentTime)
+      oscillatorTrackGainNode.connect(Audio.masterGainNode)
 
       const oscillatorGainNode = Audio.context.createGain()
       oscillatorGainNode.gain.setValueAtTime(0, Audio.context.currentTime)
-      oscillatorGainNode.connect(panNode)
+      oscillatorGainNode.connect(oscillatorTrackGainNode)
+
+      const panNode = Audio.context.createStereoPanner();
+      panNode.pan.value = pan[i];
+      panNode.connect(oscillatorGainNode);
 
       const oscillatorNode = Audio.context.createOscillator()
       oscillatorNode.connect(panNode)
       oscillatorNode.type = 'square';
-      oscillatorNode.start()
-
-
+      oscillatorNode.start();
 
       setOscillator(oscillatorNode);
       setGainNode(oscillatorGainNode);
@@ -108,7 +126,8 @@ function App() {
       const nodeStruct = {
         oscillatorNode,
         panNode,
-        oscillatorGainNode
+        oscillatorGainNode,
+        oscillatorTrackGainNode
       }
       o[i] = nodeStruct
 
@@ -155,7 +174,7 @@ function App() {
 
           <button onClick={()=>playpause()}>{isPlaying ? 'pause' : ' play  '}</button>
         </div>
-        <Grid tracks={tracks} beats={beats} tick={tick} beatLevels={beatLevels} beatFreqs={beatFreqs} updateBeat={updateBeat} pan={pan} changePan={changePan}/>
+        <Grid tracks={tracks} beats={beats} tick={tick} beatLevels={beatLevels} beatFreqs={beatFreqs} updateBeat={updateBeat} pan={pan} changePan={changePan} trackLevels={trackLevels} changeTrackLevel={changeTrackLevel} trackTypes={trackTypes} changeTrackType={changeTrackType}/>
       </div>
     </div>
   );

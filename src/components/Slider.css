@@ -22,4 +22,6 @@
 
 .sliderbarlabel {
     min-width: calc(var(--base)*3);
+    font-size: var(--s-1);
+    margin-bottom: 0;
 }
